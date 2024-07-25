@@ -40,10 +40,6 @@ import io.lettuce.core.protocol.RedisCommand;
 import io.lettuce.core.resource.ClientResources;
 import reactor.core.publisher.Mono;
 
-import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
 /**
  * Client Options to control the behavior of {@link RedisClient}.
  *
@@ -98,11 +94,7 @@ public class ClientOptions implements Serializable {
 
     public static final boolean DEFAULT_USE_HASH_INDEX_QUEUE = true;
 
-    public static final boolean DEFAULT_USE_BATCH_FLUSH = false;
-
-    public static final int DEFAULT_WRITE_SPIN_COUNT = 16;
-
-    public static final int DEFAULT_BATCH_SIZE = 8;
+    public static final AutoBatchFlushOptions DEFAULT_AUTO_BATCH_FLUSH_OPTIONS = AutoBatchFlushOptions.create();
 
     private final boolean autoReconnect;
 
@@ -139,11 +131,7 @@ public class ClientOptions implements Serializable {
     private final TimeoutOptions timeoutOptions;
 
     private final boolean useHashIndexedQueue;
-    private final boolean useBatchFlush;
-
-    private final int writeSpinCount;
-
-    private final int batchSize;
+    private final AutoBatchFlushOptions autoBatchFlushOptions;
 
     protected ClientOptions(Builder builder) {
         this.autoReconnect = builder.autoReconnect;
@@ -164,9 +152,7 @@ public class ClientOptions implements Serializable {
         this.suspendReconnectOnProtocolFailure = builder.suspendReconnectOnProtocolFailure;
         this.timeoutOptions = builder.timeoutOptions;
         this.useHashIndexedQueue = builder.useHashIndexedQueue;
-        this.useBatchFlush = builder.useBatchFlush;
-        this.writeSpinCount = builder.writeSpinCount;
-        this.batchSize = builder.batchSize;
+        this.autoBatchFlushOptions = builder.autoBatchFlushOptions;
     }
 
     protected ClientOptions(ClientOptions original) {
@@ -188,9 +174,7 @@ public class ClientOptions implements Serializable {
         this.suspendReconnectOnProtocolFailure = original.isSuspendReconnectOnProtocolFailure();
         this.timeoutOptions = original.getTimeoutOptions();
         this.useHashIndexedQueue = original.isUseHashIndexedQueue();
-        this.useBatchFlush = original.useBatchFlush;
-        this.writeSpinCount = original.getWriteSpinCount();
-        this.batchSize = original.batchSize;
+        this.autoBatchFlushOptions = original.getAutoBatchFlushOptions();
     }
 
     /**
@@ -261,11 +245,7 @@ public class ClientOptions implements Serializable {
         private ReauthenticateBehavior reauthenticateBehavior = DEFAULT_REAUTHENTICATE_BEHAVIOUR;
 
         private boolean useHashIndexedQueue = DEFAULT_USE_HASH_INDEX_QUEUE;
-        public boolean useBatchFlush = DEFAULT_USE_BATCH_FLUSH;
-
-        private int writeSpinCount = DEFAULT_WRITE_SPIN_COUNT;
-
-        private int batchSize = DEFAULT_BATCH_SIZE;
+        private AutoBatchFlushOptions autoBatchFlushOptions = DEFAULT_AUTO_BATCH_FLUSH_OPTIONS;
 
         protected Builder() {
         }
@@ -541,22 +521,14 @@ public class ClientOptions implements Serializable {
             return this;
         }
 
-        public Builder useBatchFlush(boolean useBatchFlush) {
-            this.useBatchFlush = useBatchFlush;
-            return this;
-        }
-
-        public Builder writeSpinCount(int writeSpinCount) {
-            LettuceAssert.isPositive(writeSpinCount, "writeSpinCount is not positive");
-
-            this.writeSpinCount = writeSpinCount;
-            return this;
-        }
-
-        public Builder batchSize(int batchSize) {
-            LettuceAssert.isPositive(batchSize, "batchSize is not positive");
-
-            this.batchSize = batchSize;
+        /**
+         * Sets the {@link AutoBatchFlushOptions}
+         *
+         * @param autoBatchFlushOptions must not be {@code null}.
+         */
+        public Builder autoBatchFlushOptions(AutoBatchFlushOptions autoBatchFlushOptions) {
+            LettuceAssert.notNull(autoBatchFlushOptions, "AutoBatchFlushOptions must not be null");
+            this.autoBatchFlushOptions = autoBatchFlushOptions;
             return this;
         }
 
@@ -818,16 +790,8 @@ public class ClientOptions implements Serializable {
         return timeoutOptions;
     }
 
-    public int getWriteSpinCount() {
-        return writeSpinCount;
-    }
-
-    public int getBatchSize() {
-        return batchSize;
-    }
-
-    public boolean isUseBatchFlush() {
-        return useBatchFlush;
+    public AutoBatchFlushOptions getAutoBatchFlushOptions() {
+        return autoBatchFlushOptions;
     }
 
     /**
