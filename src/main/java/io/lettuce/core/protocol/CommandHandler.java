@@ -158,7 +158,7 @@ public class CommandHandler extends ChannelDuplexHandler implements HasQueuedCom
         this.clientOptions = clientOptions;
         this.clientResources = clientResources;
         this.endpoint = endpoint;
-        this.supportsBatchFlush = endpoint instanceof BatchFlushEndpoint;
+        this.supportsBatchFlush = endpoint instanceof AutoBatchFlushEndpoint;
         this.commandLatencyRecorder = clientResources.commandLatencyRecorder();
         this.latencyMetricsEnabled = commandLatencyRecorder.isEnabled();
         this.boundedQueues = clientOptions.getRequestQueueSize() != Integer.MAX_VALUE;
@@ -409,7 +409,7 @@ public class CommandHandler extends ChannelDuplexHandler implements HasQueuedCom
 
         if (supportsBatchFlush) {
             // Needs decision of watchdog
-            ((BatchFlushEndpoint) endpoint).notifyChannelInactiveAfterWatchdogDecision(ctx.channel(),
+            ((AutoBatchFlushEndpoint) endpoint).notifyChannelInactiveAfterWatchdogDecision(ctx.channel(),
                     batchFlushRetryableDrainQueuedCommands);
         }
     }
