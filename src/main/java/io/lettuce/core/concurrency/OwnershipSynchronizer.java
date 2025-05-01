@@ -79,10 +79,10 @@ public class OwnershipSynchronizer<R> {
                         done(1);
                     }
                 });
-            } catch (Exception e) {
-                logger.error("failed to execute task in owner thread", e);
+            } catch (Throwable t) {
+                logger.error("failed to execute task in owner thread", t);
                 done(1);
-                throw e;
+                throw t;
             }
         }
     }
