@@ -102,6 +102,7 @@ public class CommandHandler extends ChannelDuplexHandler implements HasQueuedCom
     private final Endpoint endpoint;
 
     private final Queue<RedisCommand<?, ?, ?>> stack;
+
     private final boolean supportsAutoBatchFlush;
 
     private final long commandHandlerId = COMMAND_HANDLER_COUNTER.incrementAndGet();

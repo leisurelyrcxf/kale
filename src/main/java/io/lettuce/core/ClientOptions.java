@@ -131,6 +131,7 @@ public class ClientOptions implements Serializable {
     private final TimeoutOptions timeoutOptions;
 
     private final boolean useHashIndexedQueue;
+
     private final AutoBatchFlushOptions autoBatchFlushOptions;
 
     protected ClientOptions(Builder builder) {
@@ -245,6 +246,7 @@ public class ClientOptions implements Serializable {
         private ReauthenticateBehavior reauthenticateBehavior = DEFAULT_REAUTHENTICATE_BEHAVIOUR;
 
         private boolean useHashIndexedQueue = DEFAULT_USE_HASH_INDEX_QUEUE;
+
         private AutoBatchFlushOptions autoBatchFlushOptions = DEFAULT_AUTO_BATCH_FLUSH_OPTIONS;
 
         protected Builder() {
