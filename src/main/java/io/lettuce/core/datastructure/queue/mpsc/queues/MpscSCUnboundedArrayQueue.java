@@ -20,8 +20,16 @@ import static io.lettuce.core.datastructure.queue.mpsc.queues.LinkedArrayQueueUt
  * An MPSC array queue which starts at <i>initialCapacity</i> and grows indefinitely in linked chunks of the initial size.
  * The queue grows only when the current chunk is full and elements are not copied on
  * resize, instead a link to the new chunk is stored in the old chunk for the consumer to follow.
+ *
+ * NOTE: the queue is different from the original JCTools' mpsc. This queue guarantee sequential consistency semantic,
+ * i.e. later poll is guaranteed to see the latest offer while original queue can't.
+ *
+ * For test case which illustrates this issue: refer to https://github.com/leisurelyrcxf/jcstress-memorder/blob/master/src/main/java/com/vmlens/stresstest/tests/datastructure/concurrent/queue/MpscBlockingQueue_No_Dangling.java
+ *
+ * @see BaseMpscSCLinkedArrayQueue#resize(long, Object[], long, Object, Supplier)
  */
-public class MpscUnboundedArrayQueue<E> extends BaseMpscLinkedArrayQueue<E>
+@SuppressWarnings("JavadocReference")
+public class MpscSCUnboundedArrayQueue<E> extends BaseMpscSCLinkedArrayQueue<E>
 {
     byte b000,b001,b002,b003,b004,b005,b006,b007;//  8b
     byte b010,b011,b012,b013,b014,b015,b016,b017;// 16b
@@ -40,7 +48,7 @@ public class MpscUnboundedArrayQueue<E> extends BaseMpscLinkedArrayQueue<E>
     byte b160,b161,b162,b163,b164,b165,b166,b167;//120b
     byte b170,b171,b172,b173,b174,b175,b176,b177;//128b
 
-    public MpscUnboundedArrayQueue(int chunkSize)
+    public MpscSCUnboundedArrayQueue(int chunkSize)
     {
         super(chunkSize);
     }

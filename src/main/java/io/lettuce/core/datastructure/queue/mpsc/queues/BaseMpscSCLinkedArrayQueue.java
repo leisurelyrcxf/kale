@@ -171,7 +171,7 @@ abstract class BaseMpscLinkedArrayQueueColdProducerFields<E> extends BaseMpscLin
  * of the initial size. The queue grows only when the current buffer is full and elements are not copied on
  * resize, instead a link to the new buffer is stored in the old buffer for the consumer to follow.
  */
-abstract class BaseMpscLinkedArrayQueue<E> extends BaseMpscLinkedArrayQueueColdProducerFields<E>
+abstract class BaseMpscSCLinkedArrayQueue<E> extends BaseMpscLinkedArrayQueueColdProducerFields<E>
     implements MessagePassingQueue<E>, QueueProgressIndicators
 {
     // No post padding here, subclasses must add
@@ -187,7 +187,7 @@ abstract class BaseMpscLinkedArrayQueue<E> extends BaseMpscLinkedArrayQueueColdP
      * @param initialCapacity the queue initial capacity. If chunk size is fixed this will be the chunk size.
      *                        Must be 2 or more.
      */
-    public BaseMpscLinkedArrayQueue(final int initialCapacity)
+    public BaseMpscSCLinkedArrayQueue(final int initialCapacity)
     {
         RangeUtil.checkGreaterThanOrEqual(initialCapacity, 2, "initialCapacity");
 
@@ -728,7 +728,7 @@ abstract class BaseMpscLinkedArrayQueue<E> extends BaseMpscLinkedArrayQueueColdP
 
     private void resize(long oldMask, E[] oldBuffer, long pIndex, E e, Supplier<E> s)
     {
-        assert (e != null && s == null) || (e == null || s != null);
+        assert (e != null && s == null) || (e == null && s != null);
         int newBufferLength = getNextBufferSize(oldBuffer);
         final E[] newBuffer;
         try

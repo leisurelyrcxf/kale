@@ -7,8 +7,8 @@ import java.util.Queue;
 
 import javax.annotation.Nullable;
 
+import io.lettuce.core.datastructure.queue.mpsc.queues.MpscSCUnboundedArrayQueue;
 import io.lettuce.core.datastructure.queue.offerfirst.UnboundedOfferFirstQueue;
-import io.netty.util.internal.PlatformDependent;
 
 /**
  * @author chenxiaofan
@@ -20,7 +20,7 @@ public class JcToolsUnboundedMpscOfferFirstQueue<E> implements UnboundedOfferFir
      */
     private final LinkedList<Queue<? extends E>> unsafeQueues = new LinkedList<>();
 
-    private final Queue<E> mpscQueue = PlatformDependent.newMpscQueue();
+    private final Queue<E> mpscQueue = new MpscSCUnboundedArrayQueue<>(65536);
 
     @Override
     public void offer(E e) {
